@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class ConnectionBD {
 	private static ConnectionBD instance;
 	private Connection conn;
-	private String connectionURL = "jdbc:mariadb://localhost:330/scf";
+	private String connectionURL = "jdbc:mariadb://localhost:3306/scf";
 	private String user = "root";
 	private String psswrd = "";
 
