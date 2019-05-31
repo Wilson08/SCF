@@ -57,21 +57,21 @@ public class home extends Application implements EventHandler<ActionEvent>{
 		
 		createTableColumns();
 		
-		grid.add(new Label("Id"), 0, 0);
-		grid.add(txtId, 1, 0);
-		grid.add(new Label("Sabor"), 0, 1);
-		grid.add(txtSabor, 1, 1);
-		grid.add(new Label("Preço"), 0, 2);
-		grid.add(txtPreco, 1, 2);
-		grid.add(new Label("Ingredientes"), 0, 3);
-		grid.add(txtIngredientes, 1, 3);
-		grid.add(new Label("Tamanho"), 0, 4);
-		grid.add(cmbTamanho, 1, 4);
-		grid.add(new Label("Fabricacao"), 0, 5);
-		grid.add(txtFabricacao, 1, 5);
-		grid.add(btnSalvar, 0, 6);
-		grid.add(btnPesquisar, 1, 6);
-		
+		grid.add(new Label("SISTEMA DE CONTROLE FINANCEIRO"), 0, 0);
+//		grid.add(txtId, 1, 0);
+//		grid.add(new Label("Sabor"), 0, 1);
+//		grid.add(txtSabor, 1, 1);
+//		grid.add(new Label("Preço"), 0, 2);
+//		grid.add(txtPreco, 1, 2);
+//		grid.add(new Label("Ingredientes"), 0, 3);
+//		grid.add(txtIngredientes, 1, 3);
+//		grid.add(new Label("Tamanho"), 0, 4);
+//		grid.add(cmbTamanho, 1, 4);
+//		grid.add(new Label("Fabricacao"), 0, 5);
+//		grid.add(txtFabricacao, 1, 5);
+//		grid.add(btnSalvar, 0, 6);
+//		grid.add(btnPesquisar, 1, 6);
+//		
 		btnSalvar.addEventFilter(ActionEvent.ACTION, this);
 		// btnPesquisar.setOnAction(this);
 		btnPesquisar.addEventFilter(ActionEvent.ACTION, this);
