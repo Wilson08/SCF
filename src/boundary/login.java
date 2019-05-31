@@ -30,7 +30,7 @@ public class login extends Application implements EventHandler<ActionEvent> {
 		grid.setAlignment(Pos.CENTER);
 		grid.setHgap(10);
 		grid.setVgap(10);
-		grid.setPadding(new Insets(25, 25, 25, 25));
+		grid.setPadding(new Insets(40, 40, 40, 40));
 		Scene scene = new Scene(box, 300, 275);
 		box.getChildren().addAll(grid);
 		this.st = stage;
@@ -45,8 +45,8 @@ public class login extends Application implements EventHandler<ActionEvent> {
 		
 		btnSalvar.addEventFilter(ActionEvent.ACTION, this);
 		// btnPesquisar.setOnAction(this);
-	
-		
+
+		stage.resizableProperty().setValue(Boolean.FALSE);
 		stage.setScene(scene);
 		stage.setTitle("SCF - Sistema Controle Financeiro");
 		stage.show();
