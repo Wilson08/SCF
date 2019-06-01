@@ -1,7 +1,15 @@
 package boundary;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyDoubleWrapper;
+import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ChangeListener;
@@ -35,6 +43,7 @@ public class home extends Application implements EventHandler<ActionEvent>{
 	private Button btnBottomEditar = new Button("Editar    ");
 	private Button btnBottomDeletar = new Button("Deletar  ");
 	private Label lblTop = new Label("SISTEMA DE CONTROLE FINANCEIRO");
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	
 	private LancamentoControl control = new LancamentoControl ();
 	private TableView<Lancamento> tableView = new TableView<>();	
@@ -87,6 +96,18 @@ public class home extends Application implements EventHandler<ActionEvent>{
 		alert.showAndWait();
 
 	}
+	
+	private Lancamento boundaryToLancamento() {
+		Lancamento l = new Lancamento();
+		l.setIdUsuario(01);
+		l.setIdLancamento(01);
+		l.setDescricao("this a test");
+		l.setTpLancamento(01);
+		l.setValor(100.00);
+		l.setDtLancamento(new Date(System.currentTimeMillis()));
+		l.setIdCat(01);
+		return l;
+	}
 
 	
 	private void createTableColumns() { 
@@ -100,19 +121,37 @@ public class home extends Application implements EventHandler<ActionEvent>{
 				}
 			} 
 		});
-		TableColumn<Lancamento, Number> idColumn = new TableColumn<>("Id");		
-		TableColumn<Lancamento, String> tipoColumn = new TableColumn<>("Tipo");
-		TableColumn<Lancamento, Double> precoColumn = new TableColumn<>("Valor");
-		TableColumn<Lancamento, String> dtLancColumn = new TableColumn<>("Data Lanc");	
+		
+		TableColumn<Lancamento, Number> idColumn = new TableColumn<>("Id");
+		idColumn.setCellValueFactory(
+				item -> new ReadOnlyLongWrapper(item.getValue().getIdLancamento()));
+		
+		TableColumn<Lancamento, Number> tipoColumn = new TableColumn<>("Tipo");
+		tipoColumn.setCellValueFactory(
+				item -> new ReadOnlyIntegerWrapper(item.getValue().getTpLancamento()));
+		
+		TableColumn<Lancamento, String> descColumn = new TableColumn<>("Descrição");
+		descColumn.setCellValueFactory(
+				item -> new ReadOnlyStringWrapper(item.getValue().getDescricao()));
+		
+		TableColumn<Lancamento, Number> valueColumn = new TableColumn<>("Valor");
+		valueColumn.setCellValueFactory(
+				item -> new ReadOnlyDoubleWrapper(item.getValue().getValor()));
+		
+		TableColumn<Lancamento, String> dtLancColumn = new TableColumn<>("Data Lanc");
+		dtLancColumn.setCellValueFactory(
+				item -> new ReadOnlyStringWrapper(sdf.format(item.getValue().getDtLancamento()))
+				);
 		
 		
-		tableView.getColumns().addAll(idColumn, tipoColumn, precoColumn, dtLancColumn);
+		tableView.getColumns().addAll(idColumn, descColumn, tipoColumn, valueColumn, dtLancColumn);
 	}
 
 	@Override
 	public void handle(ActionEvent event) {
 		if (event.getTarget() == btnBottomAdd) {
-			System.out.println("Você clicou no botão de adicionar");
+			Lancamento l = boundaryToLancamento();
+			control.adicionar(l);
 		}
 		else if (event.getTarget() == btnBottomEditar) {
 			System.out.println("Você clicou no botão de editar");

@@ -24,6 +24,6 @@ public class CategoriaControl {
 
     private void msgError(String corpo) {
         JOptionPane.showMessageDialog(null, corpo, "ERROR", JOptionPane.ERROR_MESSAGE);
-}
+    }
 	
 }
