@@ -32,6 +32,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import scf.control.LancamentoControl;
@@ -44,12 +46,14 @@ public class home extends Application implements EventHandler<ActionEvent>{
 	private Button btnBottomDeletar = new Button("Deletar  ");
 	private Label lblTop = new Label("SISTEMA DE CONTROLE FINANCEIRO");
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	private Stage st;
 	
 	private LancamentoControl control = new LancamentoControl ();
 	private TableView<Lancamento> tableView = new TableView<>();	
 	
 	@Override
 	public void start(Stage stage) throws Exception {
+		this.st = stage;
 		BorderPane border = new BorderPane();
 		tableView.setStyle(STYLESHEET_MODENA);
 		Scene scene = new Scene(border, 1300, 800);
@@ -154,10 +158,15 @@ public class home extends Application implements EventHandler<ActionEvent>{
 			control.adicionar(l);
 		}
 		else if (event.getTarget() == btnBottomEditar) {
-			System.out.println("Você clicou no botão de editar");
+			TransacaoBoundary transc = new TransacaoBoundary();
+			try {
+				transc.start(this.st);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		else if (event.getTarget() == btnBottomDeletar) {
-			System.out.println("Você clicou no botão de deletar");
 		}
 	}
 }
