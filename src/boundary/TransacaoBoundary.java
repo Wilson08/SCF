@@ -47,15 +47,15 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 	private Stage st;
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	private LancamentoControl control = new LancamentoControl();
+	private LancamentoControl control;
 	
-	@Override
-	public void start(Stage stage) throws Exception {
+	public void start(Stage stage, LancamentoControl control) throws Exception {
 		this.st = stage;
+		this.control = control;
 		VBox box = new VBox();
 		box.setPadding(new Insets(10, 50, 50, 50));
 	    box.setSpacing(10);
-		Scene scene = new Scene(box, 400, 400);
+		Scene scene = new Scene(box, 800, 800);//(box, 400, 400);
 		Label lblT = new Label("\t    Nova Transação");
 	    lblT.setFont(Font.font("Amble CN", FontWeight.BOLD, 24));
 		box.getChildren().add(lblT);
@@ -83,33 +83,23 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 	}
 	
 	private Lancamento boundaryToLancamento() {
-// ESSE É O JEITO CORRETO DE SE FAZER --  O QUE NÃO ESTÁ COMENTADO É O QUE ESTÁ CHUMBADO
-//		Lancamento l = new Lancamento();
-//		l.setIdUsuario(01);
-//		l.setIdLancamento(01);
-//		l.setDescricao(txtTransac.getText());
-//		l.setTpLancamento(cmpTipos.getValue() == "Despesa" ? 0 : 1);
-//		try {
-//			l.setValor(Double.parseDouble(txtValor.getText()));
-//			l.setIdCat(Integer.parseInt(txtCategoria.getValue() == "" ? "0" : txtCategoria.getValue()));
-//			LocalDate ld = dataPicker.getValue();
-//			Instant instant = ld.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-//			Date date = Date.from(instant);
-//			l.setDtLancamento(date);
-//		} catch (NumberFormatException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		return l;
 		Lancamento l = new Lancamento();
 		l.setIdUsuario(01);
 		l.setIdLancamento(01);
-		l.setDescricao("this a test");
-		l.setTpLancamento(01);
-		l.setValor(100.00);
-		l.setDtLancamento(new Date(System.currentTimeMillis()));
-		l.setIdCat(01);
+		l.setDescricao(txtTransac.getText());
+		l.setTpLancamento(cmpTipos.getValue() == "Despesa" ? 0 : 1);
+		try {
+			l.setValor(Double.parseDouble(txtValor.getText()));
+			l.setIdCat(Integer.parseInt(txtCategoria.getValue() == null ? "0" : txtCategoria.getValue()));
+			LocalDate ld = dataPicker.getValue();
+			Instant instant = ld.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+			Date date = Date.from(instant);
+			l.setDtLancamento(date);
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return l;
 	}
 	
@@ -125,6 +115,8 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		}
 		else if(event.getTarget() == btnPesquisar) {
 			home uhome = new home();
+			Lancamento l = boundaryToLancamento();
+			uhome.setTeste(l);
 			try {
 				uhome.start(st);
 			} catch (Exception e) {
@@ -132,6 +124,12 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

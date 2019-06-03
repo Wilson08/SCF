@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
@@ -53,6 +54,7 @@ public class home extends Application implements EventHandler<ActionEvent>{
 	
 	@Override
 	public void start(Stage stage) throws Exception {
+
 		this.st = stage;
 		BorderPane border = new BorderPane();
 		tableView.setStyle(STYLESHEET_MODENA);
@@ -100,6 +102,15 @@ public class home extends Application implements EventHandler<ActionEvent>{
 		alert.showAndWait();
 
 	}
+	private void LancamentoToBoundary(Lancamento p) {
+//		txtId.setText( String.valueOf(p.getId()) );
+//		txtSabor.setText( p.getSabor() );
+//		txtIngredientes.setText( p.getIngredientes() );
+//		cmbTamanho.setValue( p.getTamanho() );
+//		txtPreco.setText( String.format("%6.2f", p.getPreco()) );
+//		String strData = sdf.format( p.getFabricacao() );
+//		txtFabricacao.setText( strData );
+	}
 	
 	private Lancamento boundaryToLancamento() {
 		Lancamento l = new Lancamento();
@@ -121,7 +132,7 @@ public class home extends Application implements EventHandler<ActionEvent>{
 			@Override
 			public void changed(ObservableValue<? extends Lancamento> p, Lancamento p1, Lancamento p2) {
 				if (p2 != null) { 
-					//LancamentoToBoundary(p2);
+					LancamentoToBoundary(p2);
 				}
 			} 
 		});
@@ -160,7 +171,7 @@ public class home extends Application implements EventHandler<ActionEvent>{
 		else if (event.getTarget() == btnBottomEditar) {
 			TransacaoBoundary transc = new TransacaoBoundary();
 			try {
-				transc.start(this.st);
+				transc.start(this.st,this.control);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -169,4 +180,13 @@ public class home extends Application implements EventHandler<ActionEvent>{
 		else if (event.getTarget() == btnBottomDeletar) {
 		}
 	}
+	
+	public void setTeste(Lancamento l) {
+		control.adicionar(l);
+		
+	}
 }
+
+
+
+

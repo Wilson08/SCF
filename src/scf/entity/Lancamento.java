@@ -10,6 +10,7 @@ public class Lancamento {
     private Date dtLancamento;
     private int idUsuario;
     private int idCat;
+    
     public int getIdLancamento() {
 		return idLancamento;
 	}
