@@ -49,7 +49,7 @@ public class home extends Application implements EventHandler<ActionEvent>{
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private Stage st;
 	
-	private LancamentoControl control = new LancamentoControl ();
+	private static LancamentoControl control = new LancamentoControl ();
 	private TableView<Lancamento> tableView = new TableView<>();	
 	
 	@Override
@@ -58,7 +58,7 @@ public class home extends Application implements EventHandler<ActionEvent>{
 		this.st = stage;
 		BorderPane border = new BorderPane();
 		tableView.setStyle(STYLESHEET_MODENA);
-		Scene scene = new Scene(border, 1300, 800);
+		Scene scene = new Scene(border, 800, 600);
 		HBox box = new HBox();
 		box.setSpacing(10);
 		
