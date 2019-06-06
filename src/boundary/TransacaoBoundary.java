@@ -36,13 +36,15 @@ import javafx.scene.control.DatePicker;
 public class TransacaoBoundary extends Application implements EventHandler<ActionEvent>{
 	private ObservableList<String> tipos 
 	= FXCollections.observableArrayList("Despesa", "Renda");
+	private ObservableList<String> categorias
+	= FXCollections.observableArrayList("Teste01", "Teste02","Credito");
 
 	private TextField txtTransac = new TextField();
-	private ComboBox<String> txtCategoria = new ComboBox();
+	private ComboBox<String> txtCategoria = new ComboBox(categorias);
 	private TextField txtValor = new TextField();
 	private ComboBox<String> cmpTipos = new ComboBox(tipos);
 	private Button btnSalvar = new Button("Salvar");
-	private Button btnPesquisar = new Button("Pesquisar");
+	private Button btnLimpar = new Button("Limpar");
 	private DatePicker dataPicker = new DatePicker();
 	private Stage st;
 
@@ -55,7 +57,7 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		VBox box = new VBox();
 		box.setPadding(new Insets(10, 50, 50, 50));
 	    box.setSpacing(10);
-		Scene scene = new Scene(box, 800, 800);//(box, 400, 400);
+		Scene scene = new Scene(box, 500, 600);//(box, 400, 400);
 		Label lblT = new Label("\t    Nova Transação");
 	    lblT.setFont(Font.font("Amble CN", FontWeight.BOLD, 24));
 		box.getChildren().add(lblT);
@@ -72,9 +74,9 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		box.getChildren().add(new Label("Tipos"));
 		box.getChildren().add(cmpTipos);
 		box.getChildren().add(btnSalvar);
-		box.getChildren().add(btnPesquisar);
+		box.getChildren().add(btnLimpar);
 		btnSalvar.addEventFilter(ActionEvent.ACTION, this);
-		btnPesquisar.addEventFilter(ActionEvent.ACTION, this);
+		btnLimpar.addEventFilter(ActionEvent.ACTION, this);
 		
 		stage.resizableProperty().setValue(Boolean.FALSE);
 		stage.setScene(scene);
@@ -88,15 +90,15 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		l.setIdLancamento(01);
 		l.setDescricao(txtTransac.getText());
 		l.setTpLancamento(cmpTipos.getValue() == "Despesa" ? 0 : 1);
+		l.setIdCat(1);
 		try {
 			l.setValor(Double.parseDouble(txtValor.getText()));
-			l.setIdCat(Integer.parseInt(txtCategoria.getValue() == null ? "0" : txtCategoria.getValue()));
+			l.setIdCat(1);
 			LocalDate ld = dataPicker.getValue();
 			Instant instant = ld.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
 			Date date = Date.from(instant);
 			l.setDtLancamento(date);
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -112,23 +114,23 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		if (event.getTarget() == btnSalvar) {
 			Lancamento l = boundaryToLancamento();
 			control.adicionar(l);
-		}
-		else if(event.getTarget() == btnPesquisar) {
-			home uhome = new home();
-			Lancamento l = boundaryToLancamento();
-			uhome.setTeste(l);
+			home hm = new home();
 			try {
-				uhome.start(st);
+				hm.start(st);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		} else if (event.getTarget() == btnLimpar) {
+			txtTransac.setText("");
+			txtValor.setText("");
+			cmpTipos.setValue(null);
+			txtCategoria.setValue(null);
+			dataPicker.setValue(null);
 		}
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		// TODO Auto-generated method stub
 		
 	}
 }

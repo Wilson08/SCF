@@ -13,7 +13,6 @@ public class LancamentoControl {
 	private ObservableList<Lancamento> dataList = FXCollections.observableArrayList();
 
 	public ObservableList<Lancamento> getDataList() {
-		// TODO Auto-generated method stub
 		return dataList;
 	}
 	
@@ -25,6 +24,14 @@ public class LancamentoControl {
 		lista.add(l);
 		System.out.println(
 				String.format("Adicionado lancamento %s na lista, tamanho: %d ", 
+						l, lista.size()));
+		dataList.clear();
+		dataList.addAll(lista);
+	}
+	public void deletar(Lancamento l) {
+		lista.remove(l);
+		System.out.println(
+				String.format("Removendo %s da lista, tamanho: %d", 
 						l, lista.size()));
 		dataList.clear();
 		dataList.addAll(lista);

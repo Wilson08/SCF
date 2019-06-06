@@ -44,7 +44,6 @@ public class login extends Application implements EventHandler<ActionEvent> {
 		grid.add(btnSalvar, 1, 3);
 		
 		btnSalvar.addEventFilter(ActionEvent.ACTION, this);
-		// btnPesquisar.setOnAction(this);
 
 		stage.resizableProperty().setValue(Boolean.FALSE);
 		stage.setScene(scene);
@@ -60,13 +59,12 @@ public class login extends Application implements EventHandler<ActionEvent> {
 	public void handle(ActionEvent event) {
 	
 		if (event.getTarget() == btnSalvar) { 
-				if (txtUser.getText().equals("admin") || txtUser.equals("wilson")) {
+				if (txtUser.getText().equals("admin") || txtUser.equals("wilson") || txtUser.equals("gerente") && txtPassword.equals("123")) {
 					home home = new home();
 					try {
 						home.start(this.st);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				}
 			}		
