@@ -48,7 +48,6 @@ public class LancamentoControl {
 		dataList.addAll(lista);
 		try {
 			Connection con = DriverManager.getConnection(connectionURL, user, pass);
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			String sql = "INSERT INTO lancamento" + "(idU,tipoL,descricaoL,dataL,valorL,idCategoria) VALUES"
 					+ " (?,?,?,?,?,?)";
 			PreparedStatement stmt = con.prepareStatement(sql);
@@ -56,7 +55,6 @@ public class LancamentoControl {
 			stmt.setString(2, l.getTpLancamento() == 0? "Despesa" : "Renda");
 			stmt.setString(3, l.getDescricao());
 			Date data = new Date(l.getDtLancamento().getTime());
-			System.out.println(sql);
 			stmt.setDate(4, data);
 			stmt.setDouble(5, l.getValor());
 			stmt.setInt(6, l.getIdCat());

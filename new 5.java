@@ -2,9 +2,9 @@
 import java.util.List;
 import scf.entity.Lancamento;
 public interface ILancamentoDAO {
-	int insert(Lancamento lanc, int pos) throws DAOException;
+	void insert(Lancamento lanc, int pos) throws DAOException;
 	List<Lancamento> edit(int idL) throws DAOException;
-	int delete (Lancamento lanc) throws DAOException;
+	void delete (Lancamento lanc) throws DAOException;
 }
 ////////////////////////////////////
 public class DAOException extends Exception {
@@ -95,28 +95,17 @@ public class ControlException extends Exception {
 public class UseLancamentoDAO implements ILancamentoDAO {
 	
 	@Override
-	public int adicionar(Lancamento l, int pos) throws DAOException {
+	public void adicionar(Lancamento l) throws DAOException {
 		lista.add(l);
 		dataList.clear();
 		dataList.addAll(lista);
 		try {
 			Connection con = ConnectionManager.getInstance().getConnection();
 			PreparedStatement stmt;
-			String sql;
-			if (pos == -1){
-				sql = "SET IDENTITY_INSERT lancamento on "
-				+"INSERT INTO lancamento"
-				+ "(idU,tipoL,descricaoL,dataL,valorL,idCategoria, idL) VALUES"
-				+ " (?,?,?,?,?,?,?)"
-				+" SET IDENTITY_INSERT lancamento off";
-				stmt = con.prepareStatement(sql);
-				stmt.setInt(7, pos);
-			} else {
-				sql = "INSERT INTO lancamento" 
+			String sql = "INSERT INTO lancamento" 
 				+"(idU,tipoL,descricaoL,dataL,valorL,idCategoria) VALUES"
 				+" (?,?,?,?,?,?)";
 				stmt = con.prepareStatement(sql);
-			}
 			stmt.setInt(1, l.getIdUsuario());
 			stmt.setString(2, l.getTpLancamento() == 0? "Despesa" : "Renda");
 			stmt.setString(3, l.getDescricao());
@@ -131,9 +120,7 @@ public class UseLancamentoDAO implements ILancamentoDAO {
 			System.out.println("Erro na conexão com o banco");
 			e.printStackTrace();
 			throw new DAOException(e);
-			return pos;
 		}
-		return pos = -1;
 	}
 	
 	@Override
@@ -164,7 +151,7 @@ public class UseLancamentoDAO implements ILancamentoDAO {
 		return lista;
 	}
 	
-	public int deletar(Lancamento l, int idL) throws DAOException {
+	public void deletar(Lancamento l, int idL) throws DAOException {
 		lista.remove(l);
 		System.out.println(String.format("Removendo %s da lista, tamanho: %d", l, lista.size()));
 		dataList.clear();
@@ -178,7 +165,7 @@ public class UseLancamentoDAO implements ILancamentoDAO {
 			state.executeUpdate();
 			con.close;
 		} catch (SQLException e){
-			System.out.println("Erro na conexão com o banco");
+			System.out.println("Erro na conex�o com o banco");
 			e.printStackTrace();
 			throw new DAOException(e);
 		}
@@ -186,7 +173,6 @@ public class UseLancamentoDAO implements ILancamentoDAO {
 }
 ////////////////////////////////////
 //no home isso:
-@Override
 	public void handle(ActionEvent event) {
 		if (event.getTarget() == btnBottomAdd) {
 			TransacaoBoundary transc = new TransacaoBoundary();
