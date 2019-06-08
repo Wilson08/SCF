@@ -1,0 +1,50 @@
+create table categoria(
+	idCat int not null primary key,
+	nomeCat varchar(50) not null
+)
+
+create table lancamento(
+	idL int identity not null,
+	idU int not null,
+	tipoL varchar(50) not null,
+	descricaoL varchar(100) not null,
+	dataL date not null,
+	valorL decimal(7,2) not null,
+	idCategoria int not null,
+	
+	foreign key (idCategoria) references categoria (idCat),
+    primary key (idL, idU)
+)
+
+insert into categoria values
+(1, 'Teste01'),
+(2, 'Teste02'),
+(3, 'Crédito')
+
+insert into lancamento (idU,tipoL,descricaoL,dataL,valorL,idCategoria) VALUES
+(1, 0, 'Teste','05/06/2019', 150.00, 1),
+(1, 1, 'Teste2','04/06/2019', 15.00, 3)
+
+select * from lancamento
+update lancamento
+set idU = 3
+where idL = 1
+select * from lancamento
+
+delete from lancamento
+where idL = 2
+select * from lancamento
+insert into lancamento (idU,tipoL,descricaoL,dataL,valorL,idCategoria) VALUES
+(1, 1, 'Teste2','04/06/2019', 15.00, 3)
+select * from lancamento
+set identity_insert lancamento on
+insert into lancamento (idL, idU,tipoL,descricaoL,dataL,valorL,idCategoria) VALUES
+(2, 1, 1, 'Teste2','04/06/2019', 15.00, 3)
+select * from lancamento
+
+set identity_insert lancamento off
+insert into lancamento (idU,tipoL,descricaoL,dataL,valorL,idCategoria) VALUES
+(1, 0, 'Teste3','08/06/2019', 150.00, 1),
+(1, 1, 'Teste4','07/06/2019', 15.00, 3)
+
+select * from lancamento

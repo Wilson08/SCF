@@ -154,8 +154,9 @@ public class home extends Application implements EventHandler<ActionEvent> {
 				e.printStackTrace();
 			}
 		} else if (event.getTarget() == btnBottomEditar) {
-			Lancamento l = boundaryToLancamento();
-			control.adicionar(l);
+			Lancamento l = this.tableView.getSelectionModel().getSelectedItem();
+			TransacaoBoundary transc = new TransacaoBoundary();
+			transc.edit(st, l);
 		} else if (event.getTarget() == btnBottomDeletar) {
 			Lancamento l = this.tableView.getSelectionModel().getSelectedItem();
 			control.deletar(l);
