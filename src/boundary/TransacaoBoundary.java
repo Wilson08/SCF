@@ -19,6 +19,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -27,6 +29,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import scf.control.ControlException;
 import scf.control.LancamentoControl;
 import scf.entity.Lancamento;
 import javafx.scene.text.Font;
@@ -86,7 +89,7 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		l.setIdUsuario(01);
 		l.setIdLancamento(01);
 		l.setDescricao(txtTransac.getText());
-		l.setTpLancamento(cmpTipos.getValue() == "Despesa" ? 0 : 1);
+		l.setTpLancamento(cmpTipos.getValue() == "Despesa" ? "0" : "1");
 		l.setIdCat(txtCategoria.getValue() == "Teste01" ? 1 : txtCategoria.getValue() == "Teste02" ? 2 : 3);
 		try {
 			l.setValor(Double.parseDouble(txtValor.getText()));
@@ -106,16 +109,22 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 	}
 
 	@Override
-	public void handle(ActionEvent event) {
+	public void handle(ActionEvent event){
 		Lancamento l = boundaryToLancamento();
 		if (event.getTarget() == btnSalvar) {
-			control.adicionar(l);
+			try {
+				control.adicionar(l);
+			} catch (ControlException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			System.out.println(l.getIdCat());
 			home hm = new home();
 			try {
 				hm.start(st);
 			} catch (Exception e) {
 				e.printStackTrace();
+				dialog(AlertType.ERROR, "Erro por favor tenta novamente");
 			}
 		} else if (event.getTarget() == btnLimpar) {
 			txtTransac.setText("");
@@ -124,15 +133,25 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 			txtCategoria.setValue(null);
 			dataPicker.setValue(null);
 		} else if (event.getTarget() == botao) {
-			control.deletar(l);
-			control.adicionar(l);
-			home hm = new home();
 			try {
+				control.deletar(l);
+				control.adicionar(l);
+				home hm = new home();
 				hm.start(st);
-			} catch (Exception e) {
-				e.printStackTrace();
+			}catch (Exception e1) {
+				e1.printStackTrace();
+				dialog(AlertType.ERROR, "Erro ao pesquisar no sistema");
 			}
 		}
+	}
+	
+	public void dialog(AlertType tipo, String texto) { 
+		Alert alert = new Alert(tipo);
+		alert.setTitle("Erro");
+		alert.setHeaderText(texto);
+		alert.setContentText("Consulte o administrador do sistema");
+		alert.showAndWait();
+
 	}
 
 	public void edit(Stage stage, Lancamento l) {
@@ -148,9 +167,9 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		txtTransac.setText(l.getDescricao());
 		txtCategoria.setValue(l.getIdCat() == 0 ? "Teste01" : l.getIdCat() == 1 ? "Teste02" : "Crédito");
 		txtValor.setText(Double.toString(l.getValor()));
-		LocalDate lcldt = l.getDtLancamento().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		dataPicker.setValue(lcldt);
-		cmpTipos.setValue(l.getTpLancamento() == 0 ? "Despesa" : "Renda");
+		//LocalDate lcldt = l.getDtLancamento().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		dataPicker.setValue(LocalDate.now());
+		cmpTipos.setValue(l.getTpLancamento() == "0" ? "Despesa" : "Renda");
 		box.getChildren().add(new Label("Nome da Transação"));
 		box.getChildren().add(txtTransac);
 		box.getChildren().add(new Label("Categoria"));

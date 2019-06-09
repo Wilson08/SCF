@@ -3,6 +3,7 @@ package scf.dao;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,34 @@ import scf.entity.Lancamento;
 public class UseLancamentoDAO implements ILancamentoDAO {
 	private List<Lancamento> lista = new ArrayList<>();
 	private ObservableList<Lancamento> dataList = FXCollections.observableArrayList();
+	
+	@Override
+	public List<Lancamento> pesquisaPorNome(String nome) throws DAOException {
+		List<Lancamento> lista = new ArrayList<>();
+		try {
+			Connection con = ConnectionManager.getInstance().getConnection();
+			PreparedStatement stmt;
+			String sql = "SELECT * from lancamento where descricaoL like ? ";
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, "%"+ nome +"%");
+			ResultSet  rs = stmt.executeQuery();
+			while (rs.next()) {
+				Lancamento l = new Lancamento();
+				l.setIdLancamento(rs.getInt("idL"));
+				l.setDtLancamento(rs.getDate("dataL"));
+				l.setIdCat(rs.getInt("idCategoria"));
+				l.setDescricao(rs.getString("descricaoL"));
+				l.setTpLancamento(rs.getString("tipoL"));
+				l.setValor(rs.getDouble("valorL"));
+				lista.add(l);
+			}
+		} catch (SQLException e) {
+			System.out.println("Erro na conexão com o banco");
+			e.printStackTrace();
+			throw new DAOException(e);
+		}
+		return lista;
+	}
 
 	@Override
 	public void insert(Lancamento l) throws DAOException {
@@ -27,7 +56,7 @@ public class UseLancamentoDAO implements ILancamentoDAO {
 					+ " (?,?,?,?,?,?)";
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, l.getIdUsuario());
-			stmt.setString(2, l.getTpLancamento() == 0 ? "Despesa" : "Renda");
+			stmt.setString(2, l.getTpLancamento() == "0" ? "Despesa" : "Renda");
 			stmt.setString(3, l.getDescricao());
 			Date data = new Date(l.getDtLancamento().getTime());
 			stmt.setDate(4, data);
@@ -52,7 +81,7 @@ public class UseLancamentoDAO implements ILancamentoDAO {
 					+ "dataL = ?, valorL = ?, idCategoria = ?" + " WHERE idL = ?";
 			PreparedStatement state = con.prepareStatement(sqlUpdate);
 			state.setInt(1, l.getIdUsuario());
-			state.setString(2, l.getTpLancamento() == 0 ? "Despesa" : "Renda");
+			state.setString(2, l.getTpLancamento() == "0" ? "Despesa" : "Renda");
 			state.setString(3, l.getDescricao());
 			Date data = new Date(l.getDtLancamento().getTime());
 			state.setDate(4, data);

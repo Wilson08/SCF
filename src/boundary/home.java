@@ -9,7 +9,6 @@ import java.util.GregorianCalendar;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
-import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -35,11 +34,13 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import scf.control.ControlException;
 import scf.control.LancamentoControl;
 import scf.entity.Lancamento;
 
 public class home extends Application implements EventHandler<ActionEvent> {
 
+	private TextField txt = new TextField();
 	private Button btnBottomAdd = new Button("Adicionar");
 	private Button btnBottomEditar = new Button("Editar    ");
 	private Button btnBottomDeletar = new Button("Deletar  ");
@@ -52,14 +53,16 @@ public class home extends Application implements EventHandler<ActionEvent> {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-
+		control.pesquisar("");
 		this.st = stage;
 		BorderPane border = new BorderPane();
 		tableView.setStyle(STYLESHEET_MODENA);
 		Scene scene = new Scene(border, 800, 600);
 		HBox box = new HBox();
 		box.setSpacing(10);
-
+		
+		
+		txt.textProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> System.out.println("textfield changed from " + oldValue + " to " + newValue.toString()));
 		createTableColumns();
 		border.setCenter(tableView);
 		BorderPane.setMargin(tableView, new Insets(25, 25, 10, 25));
@@ -70,7 +73,7 @@ public class home extends Application implements EventHandler<ActionEvent> {
 		BorderPane.setMargin(lblTop, new Insets(10, 10, 10, 10));
 		BorderPane.setAlignment(lblTop, Pos.CENTER);
 
-		box.getChildren().addAll(btnBottomAdd, btnBottomEditar, btnBottomDeletar);
+		box.getChildren().addAll(btnBottomAdd, btnBottomEditar, btnBottomDeletar, txt);
 		border.setBottom(box);
 		BorderPane.setAlignment(box, Pos.BOTTOM_LEFT);
 		BorderPane.setMargin(box, new Insets(10, 10, 30, 40));
@@ -106,7 +109,7 @@ public class home extends Application implements EventHandler<ActionEvent> {
 		l.setIdUsuario(01);
 		l.setIdLancamento(01);
 		l.setDescricao("this a test");
-		l.setTpLancamento(01);
+		l.setTpLancamento("01");
 		l.setValor(100.00);
 		l.setDtLancamento(new Date(System.currentTimeMillis()));
 		l.setIdCat(01);
@@ -125,10 +128,10 @@ public class home extends Application implements EventHandler<ActionEvent> {
 		});
 
 		TableColumn<Lancamento, Number> idColumn = new TableColumn<>("Id");
-		idColumn.setCellValueFactory(item -> new ReadOnlyLongWrapper(item.getValue().getIdLancamento()));
+		idColumn.setCellValueFactory(item -> new ReadOnlyIntegerWrapper(item.getValue().getIdLancamento()));
 
-		TableColumn<Lancamento, Number> tipoColumn = new TableColumn<>("Tipo");
-		tipoColumn.setCellValueFactory(item -> new ReadOnlyIntegerWrapper(item.getValue().getTpLancamento()));
+		TableColumn<Lancamento, String> tipoColumn = new TableColumn<>("Tipo");
+		tipoColumn.setCellValueFactory(item -> new ReadOnlyStringWrapper(item.getValue().getTpLancamento()));
 
 		TableColumn<Lancamento, String> descColumn = new TableColumn<>("Descrição");
 		descColumn.setCellValueFactory(item -> new ReadOnlyStringWrapper(item.getValue().getDescricao()));
@@ -159,11 +162,16 @@ public class home extends Application implements EventHandler<ActionEvent> {
 			transc.edit(st, l);
 		} else if (event.getTarget() == btnBottomDeletar) {
 			Lancamento l = this.tableView.getSelectionModel().getSelectedItem();
-			control.deletar(l);
+			try {
+				control.deletar(l);
+			} catch (ControlException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
-	public void setTeste(Lancamento l) {
+	public void setTeste(Lancamento l) throws ControlException {
 		control.adicionar(l);
 
 	}

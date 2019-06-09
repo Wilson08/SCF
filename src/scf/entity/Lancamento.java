@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Lancamento {
 	private int idLancamento;
-	private int tpLancamento;
+	private String tpLancamento;
     private double valor;
     private String descricao;
     private Date dtLancamento;
@@ -14,13 +14,13 @@ public class Lancamento {
     public int getIdLancamento() {
 		return idLancamento;
 	}
-	public void setIdLancamento(int idLancamento) {
-		this.idLancamento = idLancamento;
+	public void setIdLancamento(int l) {
+		this.idLancamento = l;
 	}
-	public int getTpLancamento() {
+	public String getTpLancamento() {
 		return tpLancamento;
 	}
-	public void setTpLancamento(int tpLancamento) {
+	public void setTpLancamento(String tpLancamento) {
 		this.tpLancamento = tpLancamento;
 	}
 	public double getValor() {
@@ -50,8 +50,8 @@ public class Lancamento {
 	public int getIdCat() {
 		return idCat;
 	}
-	public void setIdCat(int idCat) {
-		this.idCat = idCat;
+	public void setIdCat(int l) {
+		this.idCat = l;
 	}
 	public Date getFabricacao() {
 		// TODO Auto-generated method stub
