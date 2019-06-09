@@ -31,6 +31,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -53,34 +54,47 @@ public class home extends Application implements EventHandler<ActionEvent> {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+		
+
+		
 		control.pesquisar("");
 		this.st = stage;
+		
 		BorderPane border = new BorderPane();
 		tableView.setStyle(STYLESHEET_MODENA);
 		Scene scene = new Scene(border, 800, 600);
+		VBox vboxTop = new VBox();
 		HBox box = new HBox();
 		box.setSpacing(10);
 		
 		
-		txt.textProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> System.out.println("textfield changed from " + oldValue + " to " + newValue.toString()));
+		//txt.textProperty().addListener(ObservableValue<? extends Lancamento> p, Lancamento p1, Lancamento p2);
 		createTableColumns();
 		border.setCenter(tableView);
 		BorderPane.setMargin(tableView, new Insets(25, 25, 10, 25));
 		BorderPane.setAlignment(tableView, Pos.CENTER);
 
-		lblTop.setPadding(new Insets(10, 10, 10, 10));
-		border.setTop(lblTop);
-		BorderPane.setMargin(lblTop, new Insets(10, 10, 10, 10));
-		BorderPane.setAlignment(lblTop, Pos.CENTER);
+//		lblTop.setPadding(new Insets(10, 10, 10, 10));
+//		border.setTop(lblTop);
+//		BorderPane.setMargin(lblTop, new Insets(10, 10, 10, 10));
+//		BorderPane.setAlignment(lblTop, Pos.CENTER);
 
-		box.getChildren().addAll(btnBottomAdd, btnBottomEditar, btnBottomDeletar, txt);
-		border.setBottom(box);
-		BorderPane.setAlignment(box, Pos.BOTTOM_LEFT);
-		BorderPane.setMargin(box, new Insets(10, 10, 30, 40));
+		box.getChildren().addAll(btnBottomAdd, btnBottomEditar, btnBottomDeletar);
+		lblTop.setPadding(new Insets(10, 10, 10, 250));
+		box.setPadding(new Insets(10, 10, 10, 10));
+		vboxTop.getChildren().addAll(lblTop, box);
+		border.setTop(vboxTop);
+		BorderPane.setAlignment(vboxTop, Pos.CENTER);
+		BorderPane.setMargin(vboxTop, new Insets(0, 0, -20, 15));
+		
+		border.setBottom(txt);
+		BorderPane.setAlignment(txt, Pos.CENTER);
+		BorderPane.setMargin(txt, new Insets(10, 10, 10, 10));
 
 		btnBottomAdd.addEventFilter(ActionEvent.ACTION, this);
 		btnBottomEditar.addEventFilter(ActionEvent.ACTION, this);
 		btnBottomDeletar.addEventFilter(ActionEvent.ACTION, this);
+		tableView.addEventFilter(ActionEvent.ACTION, this);
 
 		stage.resizableProperty().setValue(Boolean.FALSE);
 		stage.setScene(scene);
@@ -102,6 +116,21 @@ public class home extends Application implements EventHandler<ActionEvent> {
 	}
 
 	private void LancamentoToBoundary(Lancamento p) {
+		double qtdeReceita = 0;
+		double qtdeDespesa = 0;
+		for (int i = 0; i < tableView.getItems().size(); i++) {
+			Lancamento item = tableView.getItems().get(i);
+			if(p.getIdCat() == item.getIdCat()) {
+				if(p.getTpLancamento() == "0") {
+					qtdeReceita += p.getValor();
+				}else {
+					qtdeReceita += p.getValor(); 
+				}
+			}
+			
+		}
+		txt.setText("Total de receita com categoria de id "+ p.getIdCat()+" é de : "+qtdeReceita+"                    "+
+				"Total de despesas com categoria de id "+p.getIdCat()+" é de : " + qtdeDespesa);
 	}
 
 	private Lancamento boundaryToLancamento() {
@@ -123,6 +152,7 @@ public class home extends Application implements EventHandler<ActionEvent> {
 			public void changed(ObservableValue<? extends Lancamento> p, Lancamento p1, Lancamento p2) {
 				if (p2 != null) {
 					LancamentoToBoundary(p2);
+					System.out.println(p2.getDescricao());
 				}
 			}
 		});
@@ -168,6 +198,8 @@ public class home extends Application implements EventHandler<ActionEvent> {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}else if(event.getTarget() == tableView) {
+			System.out.println("AEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
 		}
 	}
 
