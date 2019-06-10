@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import scf.entity.Categoria;
 import boundary.home;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -29,6 +30,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import scf.control.CategoriaControl;
 import scf.control.ControlException;
 import scf.control.LancamentoControl;
 import scf.entity.Lancamento;
@@ -38,7 +40,7 @@ import javafx.scene.control.DatePicker;
 
 public class TransacaoBoundary extends Application implements EventHandler<ActionEvent> {
 	private ObservableList<String> tipos = FXCollections.observableArrayList("Despesa", "Renda");
-	private ObservableList<String> categorias = FXCollections.observableArrayList("Teste01", "Teste02", "Credito");
+	private ObservableList<String> categorias = FXCollections.observableArrayList();
 
 	private TextField txtTransac = new TextField();
 	private ComboBox<String> txtCategoria = new ComboBox(categorias);
@@ -52,8 +54,10 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private LancamentoControl control;
+	private CategoriaControl controlCategoria = new CategoriaControl();
 
 	public void start(Stage stage, LancamentoControl control) throws Exception {
+		setCombo();
 		this.st = stage;
 		this.control = control;
 		VBox box = new VBox();
@@ -63,7 +67,7 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		Label lblT = new Label("\t    Nova Transação");
 		lblT.setFont(Font.font("Amble CN", FontWeight.BOLD, 24));
 		box.getChildren().add(lblT);
-
+		
 		box.getChildren().add(new Label("Nome da Transação"));
 		box.getChildren().add(txtTransac);
 		box.getChildren().add(new Label("Categoria"));
@@ -84,13 +88,30 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		stage.show();
 	}
 
+	private void setCombo() {
+		try {
+			controlCategoria.pesquisar("");
+			categorias.clear();
+			ObservableList<Categoria> data = controlCategoria.getDataList();
+			
+			for (Categoria categoria : data) {
+				categorias.add(Integer.toString(categoria.getIdCat()));
+			}
+			
+			txtCategoria.setItems(categorias);
+			
+		} catch (ControlException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private Lancamento boundaryToLancamento() {
 		Lancamento l = new Lancamento();
 		l.setIdUsuario(01);
 		l.setIdLancamento(01);
 		l.setDescricao(txtTransac.getText());
 		l.setTpLancamento(cmpTipos.getValue() == "Despesa" ? "0" : "1");
-		l.setIdCat(txtCategoria.getValue() == "Teste01" ? 1 : txtCategoria.getValue() == "Teste02" ? 2 : 3);
+		l.setIdCat(Integer.parseInt(txtCategoria.getValue()));
 		try {
 			l.setValor(Double.parseDouble(txtValor.getText()));
 			LocalDate ld = dataPicker.getValue();

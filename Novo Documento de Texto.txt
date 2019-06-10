@@ -1,5 +1,5 @@
 create table categoria(
-	idCat int not null primary key,
+	idCat int identity  not null primary key,
 	nomeCat varchar(50) not null
 )
 

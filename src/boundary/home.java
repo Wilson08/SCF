@@ -1,10 +1,7 @@
 package boundary;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
@@ -12,7 +9,6 @@ import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,18 +18,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import scf.control.ControlException;
 import scf.control.LancamentoControl;
@@ -43,6 +34,7 @@ public class home extends Application implements EventHandler<ActionEvent> {
 
 	private TextField txt = new TextField();
 	private Button btnBottomAdd = new Button("Adicionar");
+	private Button btnCategoria = new Button("Categoria");
 	private Button btnBottomEditar = new Button("Editar    ");
 	private Button btnBottomDeletar = new Button("Deletar  ");
 	private Label lblTop = new Label("SISTEMA DE CONTROLE FINANCEIRO");
@@ -68,18 +60,13 @@ public class home extends Application implements EventHandler<ActionEvent> {
 		box.setSpacing(10);
 		
 		
-		//txt.textProperty().addListener(ObservableValue<? extends Lancamento> p, Lancamento p1, Lancamento p2);
 		createTableColumns();
 		border.setCenter(tableView);
 		BorderPane.setMargin(tableView, new Insets(25, 25, 10, 25));
 		BorderPane.setAlignment(tableView, Pos.CENTER);
 
-//		lblTop.setPadding(new Insets(10, 10, 10, 10));
-//		border.setTop(lblTop);
-//		BorderPane.setMargin(lblTop, new Insets(10, 10, 10, 10));
-//		BorderPane.setAlignment(lblTop, Pos.CENTER);
 
-		box.getChildren().addAll(btnBottomAdd, btnBottomEditar, btnBottomDeletar);
+		box.getChildren().addAll(btnBottomAdd, btnBottomEditar, btnBottomDeletar, btnCategoria);
 		lblTop.setPadding(new Insets(10, 10, 10, 250));
 		box.setPadding(new Insets(10, 10, 10, 10));
 		vboxTop.getChildren().addAll(lblTop, box);
@@ -94,6 +81,7 @@ public class home extends Application implements EventHandler<ActionEvent> {
 		btnBottomAdd.addEventFilter(ActionEvent.ACTION, this);
 		btnBottomEditar.addEventFilter(ActionEvent.ACTION, this);
 		btnBottomDeletar.addEventFilter(ActionEvent.ACTION, this);
+		btnCategoria.addEventFilter(ActionEvent.ACTION, this);
 		tableView.addEventFilter(ActionEvent.ACTION, this);
 
 		stage.resizableProperty().setValue(Boolean.FALSE);
@@ -118,19 +106,20 @@ public class home extends Application implements EventHandler<ActionEvent> {
 	private void LancamentoToBoundary(Lancamento p) {
 		double qtdeReceita = 0;
 		double qtdeDespesa = 0;
-		for (int i = 0; i < tableView.getItems().size(); i++) {
-			Lancamento item = tableView.getItems().get(i);
-			if(p.getIdCat() == item.getIdCat()) {
-				if(p.getTpLancamento() == "0") {
-					qtdeReceita += p.getValor();
+		ObservableList<Lancamento> data = control.getDataList();
+		for (Lancamento lancamento : data) {
+			if ((p.getIdCat() == lancamento.getIdCat())) {
+				if(p.getTpLancamento() == "Despesa") {
+					qtdeReceita += lancamento.getValor();
 				}else {
-					qtdeReceita += p.getValor(); 
+					qtdeDespesa = qtdeDespesa + lancamento.getValor();
 				}
 			}
-			
 		}
+		String despesa = "";
+		despesa = Double.toString(qtdeDespesa);
 		txt.setText("Total de receita com categoria de id "+ p.getIdCat()+" é de : "+qtdeReceita+"                    "+
-				"Total de despesas com categoria de id "+p.getIdCat()+" é de : " + qtdeDespesa);
+				"Total de despesas com categoria de id "+p.getIdCat()+" é de : " + despesa);
 	}
 
 	private Lancamento boundaryToLancamento() {
@@ -152,7 +141,6 @@ public class home extends Application implements EventHandler<ActionEvent> {
 			public void changed(ObservableValue<? extends Lancamento> p, Lancamento p1, Lancamento p2) {
 				if (p2 != null) {
 					LancamentoToBoundary(p2);
-					System.out.println(p2.getDescricao());
 				}
 			}
 		});
@@ -183,7 +171,6 @@ public class home extends Application implements EventHandler<ActionEvent> {
 			try {
 				transc.start(this.st, this.control);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else if (event.getTarget() == btnBottomEditar) {
@@ -195,11 +182,15 @@ public class home extends Application implements EventHandler<ActionEvent> {
 			try {
 				control.deletar(l);
 			} catch (ControlException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}else if(event.getTarget() == tableView) {
-			System.out.println("AEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+		}else if(event.getTarget() == btnCategoria) {
+			CategoriaBoundary categoriaBoundary = new CategoriaBoundary();
+			try {
+				categoriaBoundary.start(this.st);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 		}
 	}
 
