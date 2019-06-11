@@ -1,24 +1,20 @@
 package boundary;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import scf.entity.Categoria;
 import boundary.home;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Alert;
@@ -26,13 +22,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import scf.control.CategoriaControl;
 import scf.control.ControlException;
 import scf.control.LancamentoControl;
+import scf.dao.UseLancamentoDAO;
 import scf.entity.Lancamento;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -49,8 +46,10 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 	private Button btnSalvar = new Button("Salvar");
 	private Button btnLimpar = new Button("Limpar");
 	private Button botao = new Button("Salvar");
+	private Button btnVoltar = new Button("Voltar");
 	private DatePicker dataPicker = new DatePicker();
 	private Stage st;
+	private int toEdit = 0;
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private LancamentoControl control;
@@ -63,11 +62,11 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		VBox box = new VBox();
 		box.setPadding(new Insets(10, 50, 50, 50));
 		box.setSpacing(10);
-		Scene scene = new Scene(box, 500, 600);// (box, 400, 400);
-		Label lblT = new Label("\t    Nova Transação");
+		Scene scene = new Scene(box, 500, 500);// (box, 400, 400);
+		Label lblT = new Label("\t      Nova Transação");
 		lblT.setFont(Font.font("Amble CN", FontWeight.BOLD, 24));
 		box.getChildren().add(lblT);
-		
+
 		box.getChildren().add(new Label("Nome da Transação"));
 		box.getChildren().add(txtTransac);
 		box.getChildren().add(new Label("Categoria"));
@@ -78,10 +77,13 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		box.getChildren().add(dataPicker);
 		box.getChildren().add(new Label("Tipos"));
 		box.getChildren().add(cmpTipos);
-		box.getChildren().add(btnSalvar);
-		box.getChildren().add(btnLimpar);
+		HBox hb = new HBox();
+		hb.setSpacing(10);
+		hb.getChildren().addAll(btnSalvar,btnLimpar,btnVoltar);
+		box.getChildren().add(hb);
 		btnSalvar.addEventFilter(ActionEvent.ACTION, this);
 		btnLimpar.addEventFilter(ActionEvent.ACTION, this);
+		btnVoltar.addEventFilter(ActionEvent.ACTION, this);
 		stage.resizableProperty().setValue(Boolean.FALSE);
 		stage.setScene(scene);
 		stage.setTitle("Nova transação");
@@ -93,13 +95,13 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 			controlCategoria.pesquisar("");
 			categorias.clear();
 			ObservableList<Categoria> data = controlCategoria.getDataList();
-			
+
 			for (Categoria categoria : data) {
 				categorias.add(Integer.toString(categoria.getIdCat()));
 			}
-			
+
 			txtCategoria.setItems(categorias);
-			
+
 		} catch (ControlException e) {
 			e.printStackTrace();
 		}
@@ -108,9 +110,8 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 	private Lancamento boundaryToLancamento() {
 		Lancamento l = new Lancamento();
 		l.setIdUsuario(01);
-		l.setIdLancamento(01);
 		l.setDescricao(txtTransac.getText());
-		l.setTpLancamento(cmpTipos.getValue() == "Despesa" ? "0" : "1");
+		l.setTpLancamento(cmpTipos.getValue());
 		l.setIdCat(Integer.parseInt(txtCategoria.getValue()));
 		try {
 			l.setValor(Double.parseDouble(txtValor.getText()));
@@ -130,13 +131,12 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 	}
 
 	@Override
-	public void handle(ActionEvent event){
-		Lancamento l = boundaryToLancamento();
+	public void handle(ActionEvent event) {
 		if (event.getTarget() == btnSalvar) {
+			Lancamento l = boundaryToLancamento();
 			try {
 				control.adicionar(l);
 			} catch (ControlException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			System.out.println(l.getIdCat());
@@ -145,7 +145,7 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 				hm.start(st);
 			} catch (Exception e) {
 				e.printStackTrace();
-				dialog(AlertType.ERROR, "Erro por favor tenta novamente");
+				dialog(AlertType.ERROR, "Erro, favor tentar novamente");
 			}
 		} else if (event.getTarget() == btnLimpar) {
 			txtTransac.setText("");
@@ -154,19 +154,27 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 			txtCategoria.setValue(null);
 			dataPicker.setValue(null);
 		} else if (event.getTarget() == botao) {
+			Lancamento l = boundaryToLancamento();
+			UseLancamentoDAO ul = new UseLancamentoDAO();
 			try {
-				control.deletar(l);
-				control.adicionar(l);
+				ul.edit(l, toEdit);
 				home hm = new home();
 				hm.start(st);
-			}catch (Exception e1) {
+			} catch (Exception e1) {
 				e1.printStackTrace();
 				dialog(AlertType.ERROR, "Erro ao pesquisar no sistema");
 			}
+		} else if(event.getTarget() == btnVoltar){
+			home hm = new home();
+			try {
+				hm.start(st);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
-	
-	public void dialog(AlertType tipo, String texto) { 
+
+	public void dialog(AlertType tipo, String texto) {
 		Alert alert = new Alert(tipo);
 		alert.setTitle("Erro");
 		alert.setHeaderText(texto);
@@ -176,21 +184,23 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 	}
 
 	public void edit(Stage stage, Lancamento l) {
+		toEdit = l.getIdLancamento();
+		System.out.println(toEdit);
+		setCombo();
 		this.st = stage;
 		VBox box = new VBox();
 		box.setPadding(new Insets(10, 50, 50, 50));
 		box.setSpacing(10);
 		Scene scene = new Scene(box, 500, 600);// (box, 400, 400);
-		Label lblT = new Label("\t  Editar Transação");
+		Label lblT = new Label("\t    Editar Transação");
 		lblT.setFont(Font.font("Amble CN", FontWeight.BOLD, 24));
 		box.getChildren().add(lblT);
 
 		txtTransac.setText(l.getDescricao());
-		txtCategoria.setValue(l.getIdCat() == 0 ? "Teste01" : l.getIdCat() == 1 ? "Teste02" : "Crédito");
+		txtCategoria.setValue(Integer.toString(l.getIdCat()));
 		txtValor.setText(Double.toString(l.getValor()));
-		//LocalDate lcldt = l.getDtLancamento().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		dataPicker.setValue(LocalDate.now());
-		cmpTipos.setValue(l.getTpLancamento() == "0" ? "Despesa" : "Renda");
+		cmpTipos.setValue(l.getTpLancamento());
 		box.getChildren().add(new Label("Nome da Transação"));
 		box.getChildren().add(txtTransac);
 		box.getChildren().add(new Label("Categoria"));
@@ -201,10 +211,13 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		box.getChildren().add(dataPicker);
 		box.getChildren().add(new Label("Tipos"));
 		box.getChildren().add(cmpTipos);
-		box.getChildren().add(botao);
-		box.getChildren().add(btnLimpar);
+		HBox hb = new HBox();
+		hb.setSpacing(10);
+		hb.getChildren().addAll(botao,btnLimpar,btnVoltar);
+		box.getChildren().add(hb);
 		botao.addEventFilter(ActionEvent.ACTION, this);
 		btnLimpar.addEventFilter(ActionEvent.ACTION, this);
+		btnVoltar.addEventFilter(ActionEvent.ACTION, this);
 
 		stage.resizableProperty().setValue(Boolean.FALSE);
 		stage.setScene(scene);

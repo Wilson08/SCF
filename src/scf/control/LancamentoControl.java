@@ -1,5 +1,8 @@
 package scf.control;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import scf.dao.DAOException;
@@ -7,7 +10,6 @@ import scf.dao.UseLancamentoDAO;
 import scf.entity.Lancamento;
 
 public class LancamentoControl {
-	//private List<Lancamento> lista = new ArrayList<>();
 	private UseLancamentoDAO lancamentoDAO = new UseLancamentoDAO();
 	private ObservableList<Lancamento> dataList = FXCollections.observableArrayList();
 
@@ -34,7 +36,7 @@ public class LancamentoControl {
 		}
 	}
 	
-	public void pesquisar(String sabor) throws ControlException { 
+	public void pesquisar(String nome) throws ControlException { 
 		try {
 			dataList.clear();
 			dataList.addAll(lancamentoDAO.pesquisaPorNome(""));
@@ -45,7 +47,6 @@ public class LancamentoControl {
 	}
 
 	public void deletar(Lancamento l) throws ControlException {
-		//lista.remove(l);
 		//System.out.println(String.format("Removendo %s da lista, tamanho: %d", l, lista.size()));
 		dataList.clear();
 		try {

@@ -1,7 +1,6 @@
 package boundary;
 
 
-
 import javax.swing.JOptionPane;
 
 import javafx.application.Application;
@@ -27,7 +26,8 @@ import scf.entity.Categoria;
 public class CategoriaBoundary  extends Application implements EventHandler<ActionEvent> {
 
 	private Button btnBottomAdd = new Button("Adicionar");
-	private Button btnBottomDeletar = new Button("Deletar  ");
+	private Button btnBottomDeletar = new Button("Deletar");
+	private Button btnBack = new Button ("Voltar");
 	private Label lblTop = new Label("Cadastro de Categoria");
 	private Stage st;
 
@@ -50,10 +50,11 @@ public class CategoriaBoundary  extends Application implements EventHandler<Acti
 		vbox.getChildren().addAll(lblTop, tableView, box);
 
 		box.setSpacing(10);
-		box.getChildren().addAll(btnBottomAdd,  btnBottomDeletar);
+		box.getChildren().addAll(btnBottomAdd,  btnBottomDeletar, btnBack);
 
 		btnBottomAdd.addEventFilter(ActionEvent.ACTION, this);
 		btnBottomDeletar.addEventFilter(ActionEvent.ACTION, this);
+		btnBack.addEventFilter(ActionEvent.ACTION, this);
 		tableView.addEventFilter(ActionEvent.ACTION, this);
 
 		stage.resizableProperty().setValue(Boolean.FALSE);
@@ -109,6 +110,8 @@ public class CategoriaBoundary  extends Application implements EventHandler<Acti
 				String nomeCat = JOptionPane.showInputDialog("Digite o nome da nova categoria");
 				c.setNomeCat(nomeCat);
 				control.adicionar(c);
+				home hm = new home();
+				hm.start(st);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -116,6 +119,14 @@ public class CategoriaBoundary  extends Application implements EventHandler<Acti
 			Categoria c = this.tableView.getSelectionModel().getSelectedItem();
 			try {
 				control.deletar(c);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if (event.getTarget() == btnBack){
+			home hm = new home();
+			try {
+				hm.start(st);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

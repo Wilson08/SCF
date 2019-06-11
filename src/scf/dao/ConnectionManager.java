@@ -31,10 +31,7 @@ public class ConnectionManager {
 	public Connection getConnection() throws SQLException {
 		if (connect == null || connect.isClosed()) {
 			connect = DriverManager.getConnection(connectionURL, user, pass);
-			System.out.println("Gerada uma nova conexão");
-		} else {
-			System.out.println("Reusando uma conexão existente");
-		}
+		} 
 		return connect;
 	}
 

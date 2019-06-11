@@ -46,7 +46,7 @@ public class UseCategoriaDAO implements ICategoriaDAO{
 		try {
 			Connection con = ConnectionManager.getInstance().getConnection();
 			PreparedStatement stmt;
-			String sql = "INSERT INTO CATEGORIA" + "(NOMECAT) VALUES"
+			String sql = "INSERT INTO CATEGORIA " + " (NOMECAT) VALUES"
 					+ " (?)";
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, categoria.getNomeCat());

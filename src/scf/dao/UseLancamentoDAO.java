@@ -52,16 +52,16 @@ public class UseLancamentoDAO implements ILancamentoDAO {
 		try {
 			Connection con = ConnectionManager.getInstance().getConnection();
 			PreparedStatement stmt;
-			String sql = "INSERT INTO lancamento" + "(idU,tipoL,descricaoL,dataL,valorL,idCategoria) VALUES"
+			String sql = "INSERT INTO lancamento" + "(idU,tipoL,descricaoL,valorL,idCategoria,dataL) VALUES"
 					+ " (?,?,?,?,?,?)";
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, l.getIdUsuario());
-			stmt.setString(2, l.getTpLancamento() == "0" ? "Despesa" : "Renda");
+			stmt.setString(2, l.getTpLancamento());
 			stmt.setString(3, l.getDescricao());
+			stmt.setDouble(4, l.getValor());
+			stmt.setInt(5, l.getIdCat());
 			Date data = new Date(l.getDtLancamento().getTime());
-			stmt.setDate(4, data);
-			stmt.setDouble(5, l.getValor());
-			stmt.setInt(6, l.getIdCat());
+			stmt.setDate(6, data);
 			stmt.executeUpdate();
 			con.close();
 
@@ -73,15 +73,15 @@ public class UseLancamentoDAO implements ILancamentoDAO {
 	}
 
 	@Override
-	public List<Lancamento> edit(Lancamento l, int idL) throws DAOException {
-		List<Lancamento> lista = new ArrayList();
+	public void edit(Lancamento l, int idL) throws DAOException {
 		try {
+			System.out.println(l.getIdLancamento());
 			Connection con = ConnectionManager.getInstance().getConnection();
 			String sqlUpdate = "UPDATE lancamento " + "SET idU = ?, tipoL = ?, descricaoL = ?, "
 					+ "dataL = ?, valorL = ?, idCategoria = ?" + " WHERE idL = ?";
 			PreparedStatement state = con.prepareStatement(sqlUpdate);
 			state.setInt(1, l.getIdUsuario());
-			state.setString(2, l.getTpLancamento() == "0" ? "Despesa" : "Renda");
+			state.setString(2, l.getTpLancamento());
 			state.setString(3, l.getDescricao());
 			Date data = new Date(l.getDtLancamento().getTime());
 			state.setDate(4, data);
@@ -95,7 +95,6 @@ public class UseLancamentoDAO implements ILancamentoDAO {
 			e.printStackTrace();
 			throw new DAOException(e);
 		}
-		return lista;
 	}
 
 	@Override

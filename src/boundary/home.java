@@ -46,25 +46,21 @@ public class home extends Application implements EventHandler<ActionEvent> {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		
 
-		
 		control.pesquisar("");
 		this.st = stage;
-		
+
 		BorderPane border = new BorderPane();
 		tableView.setStyle(STYLESHEET_MODENA);
 		Scene scene = new Scene(border, 800, 600);
 		VBox vboxTop = new VBox();
 		HBox box = new HBox();
 		box.setSpacing(10);
-		
-		
+
 		createTableColumns();
 		border.setCenter(tableView);
 		BorderPane.setMargin(tableView, new Insets(25, 25, 10, 25));
 		BorderPane.setAlignment(tableView, Pos.CENTER);
-
 
 		box.getChildren().addAll(btnBottomAdd, btnBottomEditar, btnBottomDeletar, btnCategoria);
 		lblTop.setPadding(new Insets(10, 10, 10, 250));
@@ -73,7 +69,7 @@ public class home extends Application implements EventHandler<ActionEvent> {
 		border.setTop(vboxTop);
 		BorderPane.setAlignment(vboxTop, Pos.CENTER);
 		BorderPane.setMargin(vboxTop, new Insets(0, 0, -20, 15));
-		
+
 		border.setBottom(txt);
 		BorderPane.setAlignment(txt, Pos.CENTER);
 		BorderPane.setMargin(txt, new Insets(10, 10, 10, 10));
@@ -109,17 +105,18 @@ public class home extends Application implements EventHandler<ActionEvent> {
 		ObservableList<Lancamento> data = control.getDataList();
 		for (Lancamento lancamento : data) {
 			if ((p.getIdCat() == lancamento.getIdCat())) {
-				if(p.getTpLancamento() == "Despesa") {
-					qtdeReceita += lancamento.getValor();
-				}else {
-					qtdeDespesa = qtdeDespesa + lancamento.getValor();
+				if (p.getTpLancamento().equals("Despesa")) {
+					qtdeDespesa += lancamento.getValor();
+				} else {
+					qtdeReceita = qtdeReceita + lancamento.getValor();
 				}
 			}
 		}
 		String despesa = "";
 		despesa = Double.toString(qtdeDespesa);
-		txt.setText("Total de receita com categoria de id "+ p.getIdCat()+" é de : "+qtdeReceita+"                    "+
-				"Total de despesas com categoria de id "+p.getIdCat()+" é de : " + despesa);
+		txt.setText("Total de receita com categoria de id " + p.getIdCat() + " é de : " + qtdeReceita
+				+ "                    " + "Total de despesas com categoria de id " + p.getIdCat() + " é de : "
+				+ despesa);
 	}
 
 	private Lancamento boundaryToLancamento() {
@@ -184,7 +181,7 @@ public class home extends Application implements EventHandler<ActionEvent> {
 			} catch (ControlException e) {
 				e.printStackTrace();
 			}
-		}else if(event.getTarget() == btnCategoria) {
+		} else if (event.getTarget() == btnCategoria) {
 			CategoriaBoundary categoriaBoundary = new CategoriaBoundary();
 			try {
 				categoriaBoundary.start(this.st);

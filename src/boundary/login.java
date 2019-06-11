@@ -1,5 +1,6 @@
 package boundary;
 
+import javax.swing.JOptionPane;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -10,9 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -22,7 +21,8 @@ public class login extends Application implements EventHandler<ActionEvent> {
 	private TextField txtPassword = new TextField();
 	private Button btnSalvar = new Button("Entrar");
 	private Stage st;
-	
+	private String iniciarServ = "cmd /c java -cp hsqldb.jar org.hsqldb.Server -database.0 SCF -dbname.0 SCF";
+
 	@Override
 	public void start(Stage stage) throws Exception {
 		VBox box = new VBox();
@@ -34,15 +34,14 @@ public class login extends Application implements EventHandler<ActionEvent> {
 		Scene scene = new Scene(box, 300, 275);
 		box.getChildren().addAll(grid);
 		this.st = stage;
-		
-		
+
 		grid.add(new Label("Usuario"), 0, 1);
 		grid.add(txtUser, 1, 1);
 		grid.add(new Label("Senha"), 0, 2);
 		PasswordField pwBox = new PasswordField();
 		grid.add(pwBox, 1, 2);
 		grid.add(btnSalvar, 1, 3);
-		
+
 		btnSalvar.addEventFilter(ActionEvent.ACTION, this);
 
 		stage.resizableProperty().setValue(Boolean.FALSE);
@@ -50,24 +49,28 @@ public class login extends Application implements EventHandler<ActionEvent> {
 		stage.setTitle("SCF - Sistema Controle Financeiro");
 		stage.show();
 	}
-	
+
 	public static void main(String[] args) {
 		Application.launch(args);
 	}
 
 	@Override
 	public void handle(ActionEvent event) {
-	
-		if (event.getTarget() == btnSalvar) { 
-				if (txtUser.getText().equals("admin") || txtUser.equals("wilson") || txtUser.equals("gerente") && txtPassword.equals("123")) {
-					home home = new home();
-					try {
-						home.start(this.st);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-					}
+
+		if (event.getTarget() == btnSalvar) {
+			if (txtUser.getText().equals("admin") || txtUser.getText().equals("wilson")
+					|| txtUser.getText().equals("gerente") && txtPassword.getText().equals("123")) {
+				home home = new home();
+				try {
+					Runtime.getRuntime().exec(iniciarServ);
+					home.start(this.st);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
 				}
-			}		
+			} else {
+				JOptionPane.showMessageDialog(null, "SENHA OU USUÁRIO INCORRETOS");
+			}
 		}
-		
 	}
+
+}

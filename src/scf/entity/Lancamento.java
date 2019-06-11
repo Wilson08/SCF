@@ -53,9 +53,5 @@ public class Lancamento {
 	public void setIdCat(int l) {
 		this.idCat = l;
 	}
-	public Date getFabricacao() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }
