@@ -15,11 +15,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import scf.dao.DAOException;
+import scf.dao.UseUsuarioDAO;
+import scf.entity.Usuario;
 
 public class login extends Application implements EventHandler<ActionEvent> {
 	private TextField txtUser = new TextField();
-	private TextField txtPassword = new TextField();
-	private Button btnSalvar = new Button("Entrar");
+	private PasswordField pwBox = new PasswordField();
+	private Button btnEntrar = new Button("Entrar");
+	private Button btnCadastrar = new Button("Cadastrar");
 	private Stage st;
 	private String iniciarServ = "cmd /c java -cp hsqldb.jar org.hsqldb.Server -database.0 SCF -dbname.0 SCF";
 
@@ -31,18 +35,24 @@ public class login extends Application implements EventHandler<ActionEvent> {
 		grid.setHgap(10);
 		grid.setVgap(10);
 		grid.setPadding(new Insets(40, 40, 40, 40));
-		Scene scene = new Scene(box, 300, 275);
+		Scene scene = new Scene(box, 300, 200);
 		box.getChildren().addAll(grid);
 		this.st = stage;
 
-		grid.add(new Label("Usuario"), 0, 1);
+		Label user = new Label("Usuario");
+		Label pass = new Label("Senha");
+		user.setPrefWidth(100);
+		grid.add(user, 0, 1);
 		grid.add(txtUser, 1, 1);
-		grid.add(new Label("Senha"), 0, 2);
-		PasswordField pwBox = new PasswordField();
+		grid.add(pass, 0, 2);
 		grid.add(pwBox, 1, 2);
-		grid.add(btnSalvar, 1, 3);
+		grid.add(btnEntrar, 0, 3);
+		grid.add(btnCadastrar, 1, 3);
+		txtUser.setText(null);
+		btnEntrar.addEventFilter(ActionEvent.ACTION, this);
+		btnCadastrar.addEventFilter(ActionEvent.ACTION, this);
 
-		btnSalvar.addEventFilter(ActionEvent.ACTION, this);
+		Runtime.getRuntime().exec(iniciarServ);
 
 		stage.resizableProperty().setValue(Boolean.FALSE);
 		stage.setScene(scene);
@@ -56,19 +66,34 @@ public class login extends Application implements EventHandler<ActionEvent> {
 
 	@Override
 	public void handle(ActionEvent event) {
-
-		if (event.getTarget() == btnSalvar) {
-			if (txtUser.getText().equals("admin") || txtUser.getText().equals("wilson")
-					|| txtUser.getText().equals("gerente") && txtPassword.getText().equals("123")) {
-				home home = new home();
-				try {
-					Runtime.getRuntime().exec(iniciarServ);
-					home.start(this.st);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
+		UseUsuarioDAO userDAO = new UseUsuarioDAO();
+		if (event.getTarget() == btnEntrar) {
+			try {
+				if (txtUser.getText() == null || pwBox.getText() == null) {
+					JOptionPane.showMessageDialog(null, "Usuário inválido");
+				} else if (txtUser.getText().equals("admin") || userDAO.logIn(txtUser.getText(), pwBox.getText())) {
+					home home = new home();
+					try {
+						home.start(this.st);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-			} else {
-				JOptionPane.showMessageDialog(null, "SENHA OU USUÁRIO INCORRETOS");
+			} catch (DAOException e) {
+				e.printStackTrace();
+			}
+		} else if (event.getTarget() == btnCadastrar) {
+			try {
+				if (userDAO.add(txtUser.getText(), pwBox.getText())) {
+					home home = new home();
+					try {
+						home.start(this.st);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			} catch (DAOException e) {
+				e.printStackTrace();
 			}
 		}
 	}

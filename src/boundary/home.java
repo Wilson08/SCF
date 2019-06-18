@@ -1,7 +1,6 @@
 package boundary;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
@@ -31,22 +30,20 @@ import scf.control.LancamentoControl;
 import scf.entity.Lancamento;
 
 public class home extends Application implements EventHandler<ActionEvent> {
-
 	private TextField txt = new TextField();
 	private Button btnBottomAdd = new Button("Adicionar");
 	private Button btnCategoria = new Button("Categoria");
 	private Button btnBottomEditar = new Button("Editar    ");
 	private Button btnBottomDeletar = new Button("Deletar  ");
+	private Button btnGrafico = new Button("Exibir Gráfico");
 	private Label lblTop = new Label("SISTEMA DE CONTROLE FINANCEIRO");
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private Stage st;
-
 	private static LancamentoControl control = new LancamentoControl();
 	private TableView<Lancamento> tableView = new TableView<>();
-
+	
 	@Override
 	public void start(Stage stage) throws Exception {
-
 		control.pesquisar("");
 		this.st = stage;
 
@@ -62,7 +59,7 @@ public class home extends Application implements EventHandler<ActionEvent> {
 		BorderPane.setMargin(tableView, new Insets(25, 25, 10, 25));
 		BorderPane.setAlignment(tableView, Pos.CENTER);
 
-		box.getChildren().addAll(btnBottomAdd, btnBottomEditar, btnBottomDeletar, btnCategoria);
+		box.getChildren().addAll(btnBottomAdd, btnBottomEditar, btnBottomDeletar, btnCategoria, btnGrafico);
 		lblTop.setPadding(new Insets(10, 10, 10, 250));
 		box.setPadding(new Insets(10, 10, 10, 10));
 		vboxTop.getChildren().addAll(lblTop, box);
@@ -78,6 +75,7 @@ public class home extends Application implements EventHandler<ActionEvent> {
 		btnBottomEditar.addEventFilter(ActionEvent.ACTION, this);
 		btnBottomDeletar.addEventFilter(ActionEvent.ACTION, this);
 		btnCategoria.addEventFilter(ActionEvent.ACTION, this);
+		btnGrafico.addEventFilter(ActionEvent.ACTION, this);
 		tableView.addEventFilter(ActionEvent.ACTION, this);
 
 		stage.resizableProperty().setValue(Boolean.FALSE);
@@ -117,18 +115,6 @@ public class home extends Application implements EventHandler<ActionEvent> {
 		txt.setText("Total de receita com categoria de id " + p.getIdCat() + " é de : " + qtdeReceita
 				+ "                    " + "Total de despesas com categoria de id " + p.getIdCat() + " é de : "
 				+ despesa);
-	}
-
-	private Lancamento boundaryToLancamento() {
-		Lancamento l = new Lancamento();
-		l.setIdUsuario(01);
-		l.setIdLancamento(01);
-		l.setDescricao("this a test");
-		l.setTpLancamento("01");
-		l.setValor(100.00);
-		l.setDtLancamento(new Date(System.currentTimeMillis()));
-		l.setIdCat(01);
-		return l;
 	}
 
 	private void createTableColumns() {
@@ -188,11 +174,14 @@ public class home extends Application implements EventHandler<ActionEvent> {
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
+		} else if (event.getTarget() == btnGrafico) {
+			GraficoBoundary gb = new GraficoBoundary();
+			try {
+				gb.start(this.st);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 		}
 	}
 
-	public void setTeste(Lancamento l) throws ControlException {
-		control.adicionar(l);
-
-	}
 }

@@ -8,27 +8,34 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import boundary.login;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import scf.entity.Lancamento;
+import scf.entity.Usuario;
 
 public class UseLancamentoDAO implements ILancamentoDAO {
 	private List<Lancamento> lista = new ArrayList<>();
 	private ObservableList<Lancamento> dataList = FXCollections.observableArrayList();
-	
+	private UseUsuarioDAO ud = new UseUsuarioDAO();
+	private Usuario u = ud.getUser();
+
 	@Override
 	public List<Lancamento> pesquisaPorNome(String nome) throws DAOException {
 		List<Lancamento> lista = new ArrayList<>();
 		try {
 			Connection con = ConnectionManager.getInstance().getConnection();
 			PreparedStatement stmt;
-			String sql = "SELECT * from lancamento where descricaoL like ? ";
+			System.out.println(u.getId());
+			String sql = "SELECT * from lancamento where descricaoL like ? and idU = ?";
 			stmt = con.prepareStatement(sql);
-			stmt.setString(1, "%"+ nome +"%");
-			ResultSet  rs = stmt.executeQuery();
+			stmt.setString(1, "%" + nome + "%");
+			stmt.setInt(2, u.getId());
+			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				Lancamento l = new Lancamento();
 				l.setIdLancamento(rs.getInt("idL"));
+				l.setIdUsuario(rs.getInt("idU"));
 				l.setDtLancamento(rs.getDate("dataL"));
 				l.setIdCat(rs.getInt("idCategoria"));
 				l.setDescricao(rs.getString("descricaoL"));
@@ -55,7 +62,7 @@ public class UseLancamentoDAO implements ILancamentoDAO {
 			String sql = "INSERT INTO lancamento" + "(idU,tipoL,descricaoL,valorL,idCategoria,dataL) VALUES"
 					+ " (?,?,?,?,?,?)";
 			stmt = con.prepareStatement(sql);
-			stmt.setInt(1, l.getIdUsuario());
+			stmt.setInt(1, u.getId());
 			stmt.setString(2, l.getTpLancamento());
 			stmt.setString(3, l.getDescricao());
 			stmt.setDouble(4, l.getValor());
@@ -77,17 +84,16 @@ public class UseLancamentoDAO implements ILancamentoDAO {
 		try {
 			System.out.println(l.getIdLancamento());
 			Connection con = ConnectionManager.getInstance().getConnection();
-			String sqlUpdate = "UPDATE lancamento " + "SET idU = ?, tipoL = ?, descricaoL = ?, "
+			String sqlUpdate = "UPDATE lancamento " + "SET tipoL = ?, descricaoL = ?, "
 					+ "dataL = ?, valorL = ?, idCategoria = ?" + " WHERE idL = ?";
 			PreparedStatement state = con.prepareStatement(sqlUpdate);
-			state.setInt(1, l.getIdUsuario());
-			state.setString(2, l.getTpLancamento());
-			state.setString(3, l.getDescricao());
+			state.setString(1, l.getTpLancamento());
+			state.setString(2, l.getDescricao());
 			Date data = new Date(l.getDtLancamento().getTime());
-			state.setDate(4, data);
-			state.setDouble(5, l.getValor());
-			state.setInt(6, l.getIdCat());
-			state.setInt(7, idL);
+			state.setDate(3, data);
+			state.setDouble(4, l.getValor());
+			state.setInt(5, l.getIdCat());
+			state.setInt(6, idL);
 			state.executeUpdate();
 			con.close();
 		} catch (SQLException e) {
@@ -116,4 +122,5 @@ public class UseLancamentoDAO implements ILancamentoDAO {
 			throw new DAOException(e);
 		}
 	}
+
 }
