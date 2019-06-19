@@ -44,19 +44,20 @@ public class GraficoBoundary extends Application {
 
 		BarChart barChart = new BarChart(xAxis, yAxis);
 
-		XYChart.Series dataSeries1 = buildDespesa();
-		dataSeries1.setName("Despesa");
+		XYChart.Series dataRenda = buildRenda();
+		dataRenda.setName("Renda");
 
-		XYChart.Series dataSeries2 = buildRenda();
-		dataSeries2.setName("Renda");
+		XYChart.Series dataDespesa = buildDespesa();
+		dataDespesa.setName("Despesa");
 
 
-		barChart.getData().addAll(dataSeries1, dataSeries2);
+		barChart.getData().addAll(dataRenda, dataDespesa);
 
 		VBox vbox = new VBox(barChart);
 
 		Scene scene = new Scene(vbox, 200, 200);
-
+		primaryStage.setHeight(400);
+		primaryStage.setWidth(400);
 		primaryStage.setScene(scene);
 
 		primaryStage.show();
@@ -84,7 +85,7 @@ public class GraficoBoundary extends Application {
 			String sqlUpdate = "SELECT SUM(valorL) as valorL, "
 					+ "CONCAT(MONTH(dataL),'/',(YEAR(dataL))) as data"
 					+ " FROM lancamento WHERE idU = ? AND tipoL LIKE '%Despesa%' "
-					+ "GROUP BY dataL";
+					+ "GROUP BY dataL ";
 			PreparedStatement state = con.prepareStatement(sqlUpdate);
 			state.setInt(1, u.getId());
 			ResultSet rs = state.executeQuery();
@@ -106,8 +107,8 @@ public class GraficoBoundary extends Application {
 			Connection con = ConnectionManager.getInstance().getConnection();
 			String sqlUpdate = "SELECT SUM(valorL) as valorL, "
 					+ "CONCAT(MONTH(dataL),'/',(YEAR(dataL))) as data"
-					+ " FROM lancamento WHERE idU = ? AND tipoL LIKE '%Despesa%' "
-					+ "GROUP BY dataL";
+					+ " FROM lancamento WHERE idU = ? AND tipoL LIKE '%Renda%' "
+					+ "GROUP BY dataL ";
 			PreparedStatement state = con.prepareStatement(sqlUpdate);
 			state.setInt(1, u.getId());
 			ResultSet rs = state.executeQuery();

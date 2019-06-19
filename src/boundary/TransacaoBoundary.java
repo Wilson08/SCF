@@ -86,6 +86,8 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		btnSalvar.addEventFilter(ActionEvent.ACTION, this);
 		btnLimpar.addEventFilter(ActionEvent.ACTION, this);
 		btnVoltar.addEventFilter(ActionEvent.ACTION, this);
+		stage.setHeight(500);
+		stage.setWidth(500);
 		stage.resizableProperty().setValue(Boolean.FALSE);
 		stage.setScene(scene);
 		stage.setTitle("Nova transação");
@@ -141,7 +143,6 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 			} catch (ControlException e1) {
 				e1.printStackTrace();
 			}
-			System.out.println(l.getIdCat());
 			home hm = new home();
 			try {
 				hm.start(st);
@@ -187,7 +188,6 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 
 	public void edit(Stage stage, Lancamento l) {
 		toEdit = l.getIdLancamento();
-		System.out.println(toEdit);
 		setCombo();
 		this.st = stage;
 		VBox box = new VBox();
@@ -220,7 +220,8 @@ public class TransacaoBoundary extends Application implements EventHandler<Actio
 		botao.addEventFilter(ActionEvent.ACTION, this);
 		btnLimpar.addEventFilter(ActionEvent.ACTION, this);
 		btnVoltar.addEventFilter(ActionEvent.ACTION, this);
-
+		stage.setHeight(500);
+		stage.setWidth(500);
 		stage.resizableProperty().setValue(Boolean.FALSE);
 		stage.setScene(scene);
 		stage.setTitle("Editar transação");

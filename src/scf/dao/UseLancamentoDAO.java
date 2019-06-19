@@ -26,7 +26,6 @@ public class UseLancamentoDAO implements ILancamentoDAO {
 		try {
 			Connection con = ConnectionManager.getInstance().getConnection();
 			PreparedStatement stmt;
-			System.out.println(u.getId());
 			String sql = "SELECT * from lancamento where descricaoL like ? and idU = ?";
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, "%" + nome + "%");

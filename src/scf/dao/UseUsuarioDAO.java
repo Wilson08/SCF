@@ -10,9 +10,9 @@ import javax.swing.JOptionPane;
 import scf.entity.Usuario;
 
 public class UseUsuarioDAO implements IUsuarioDao {
-	private Usuario u = new Usuario();
+	private static Usuario u = new Usuario();
 
-	public Usuario getUser() {
+	public static Usuario getUser() {
 		return u;
 	}
 
@@ -58,7 +58,6 @@ public class UseUsuarioDAO implements IUsuarioDao {
 				ResultSet rs = stmt.executeQuery();
 
 				while (rs.next()) {
-					System.out.println(u.getId());
 					u.setId(rs.getInt("idUser"));
 					u.setNome(usuario);
 					u.setPass(senha);

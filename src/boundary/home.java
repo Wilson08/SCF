@@ -78,6 +78,8 @@ public class home extends Application implements EventHandler<ActionEvent> {
 		btnGrafico.addEventFilter(ActionEvent.ACTION, this);
 		tableView.addEventFilter(ActionEvent.ACTION, this);
 
+		stage.setHeight(600);
+		stage.setWidth(800);
 		stage.resizableProperty().setValue(Boolean.FALSE);
 		stage.setScene(scene);
 		stage.setTitle("Gestão de Lancamentos");

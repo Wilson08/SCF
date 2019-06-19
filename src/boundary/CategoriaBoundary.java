@@ -56,7 +56,8 @@ public class CategoriaBoundary  extends Application implements EventHandler<Acti
 		btnBottomDeletar.addEventFilter(ActionEvent.ACTION, this);
 		btnBack.addEventFilter(ActionEvent.ACTION, this);
 		tableView.addEventFilter(ActionEvent.ACTION, this);
-
+		stage.setHeight(200);
+		stage.setWidth(400);
 		stage.resizableProperty().setValue(Boolean.FALSE);
 		stage.setScene(scene);
 		stage.setTitle("Gestão de Categorias");
