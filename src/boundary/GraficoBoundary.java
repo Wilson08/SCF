@@ -85,7 +85,7 @@ public class GraficoBoundary extends Application {
 			String sqlUpdate = "SELECT SUM(valorL) as valorL, "
 					+ "CONCAT(MONTH(dataL),'/',(YEAR(dataL))) as data"
 					+ " FROM lancamento WHERE idU = ? AND tipoL LIKE '%Despesa%' "
-					+ "GROUP BY dataL ";
+					+ "GROUP BY MONTH(dataL),YEAR(dataL) ";
 			PreparedStatement state = con.prepareStatement(sqlUpdate);
 			state.setInt(1, u.getId());
 			ResultSet rs = state.executeQuery();
@@ -105,15 +105,16 @@ public class GraficoBoundary extends Application {
 		XYChart.Series dataSeries1 = new XYChart.Series();
 		try {
 			Connection con = ConnectionManager.getInstance().getConnection();
-			String sqlUpdate = "SELECT SUM(valorL) as valorL, "
+			String sqlUpdate = "SELECT SUM(valorL) as valor, "
 					+ "CONCAT(MONTH(dataL),'/',(YEAR(dataL))) as data"
 					+ " FROM lancamento WHERE idU = ? AND tipoL LIKE '%Renda%' "
-					+ "GROUP BY dataL ";
+					+ "GROUP BY MONTH(dataL),YEAR(dataL)";
 			PreparedStatement state = con.prepareStatement(sqlUpdate);
 			state.setInt(1, u.getId());
 			ResultSet rs = state.executeQuery();
 			while (rs.next()) {
-				dataSeries1.getData().add(new XYChart.Data(rs.getString("data"), rs.getDouble("valorL")));
+				dataSeries1.getData().add(new XYChart.Data(rs.getString("data"), rs.getDouble("valor")));
+				System.out.println(rs.getDouble("valor"));
 			}
 			con.close();
 		} catch (SQLException e) {
