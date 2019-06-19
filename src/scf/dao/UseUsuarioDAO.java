@@ -53,10 +53,11 @@ public class UseUsuarioDAO implements IUsuarioDao {
 				stmt.setString(2, senha);
 				stmt.executeUpdate();
 
-				String sql2 = "SELECT idUser FROM usuario";
+				String sql2 = "SELECT idUser FROM usuario WHERE nomeUser = ? AND senhaUser = ?";
 				stmt = con.prepareStatement(sql2);
+				stmt.setString(1, usuario);
+				stmt.setString(2, senha);
 				ResultSet rs = stmt.executeQuery();
-
 				while (rs.next()) {
 					u.setId(rs.getInt("idUser"));
 					u.setNome(usuario);
